@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CreatioManager\CreatioManager.csproj" />
+    <ProjectReference Include="..\MupiBussines\MupiBussines.csproj" />
+    <ProjectReference Include="..\MupiModel\MupiModel.csproj" />
+    <ProjectReference Include="..\MupiSource\MupiSource.csproj" />
+    <ProjectReference Include="..\PraxiManager\PraxiManager.csproj" />
+  </ItemGroup>
+
+</Project>
