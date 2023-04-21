@@ -31,6 +31,7 @@ namespace PraxiManager.Services.Imp
         }
 
         private int _executionCount;
+        private int _executionCount2;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -66,21 +67,23 @@ namespace PraxiManager.Services.Imp
             logger.LogInformation("Timed Hosted Service running.");
 
             // When the timer should have no due-time, then do the work once now.
-            await DoWork(stoppingToken);
 
             using PeriodicTimer timer = new(TimeSpan.FromSeconds(5));
-            using PeriodicTimer timer2 = new(TimeSpan.FromSeconds(10));
+
+
+            await DoWork(stoppingToken);
+            await DoWork2();
+          
 
             try
             {
                 while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
 
-                    await Task.WhenAny(
-                        DoWork(stoppingToken),
-                        DoWork2()                        
-                        );
-                    logger.LogInformation("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                   var asdasdas= await Task.WhenAny(DoWork(stoppingToken), DoWork2());
+
+
+            
 
                 }
             }
@@ -98,18 +101,22 @@ namespace PraxiManager.Services.Imp
             int count = Interlocked.Increment(ref _executionCount);
 
 
-            await Task.Delay(6 * 1000, stoppingToken);
 
-
-            logger.LogInformation($"Task 1. Count {count}: {DateTime.Now:G}");
+            Thread.Sleep(10 * 1000);
+            logger.LogInformation($"DoWork1. Thread {count}: {DateTime.Now:G}");
+            File.AppendAllLines("D:\\CAAO.txt",new List<string> { $"DoWork1.{count}: {DateTime.Now:G}" });
 
         }
         private async Task DoWork2()
         {
 
-            //int count = Interlocked.Increment(ref _executionCount);
+            int count = Interlocked.Increment(ref _executionCount2);
 
-            logger.LogInformation($"Task 2. Count {_executionCount}: {DateTime.Now:G}");
+            logger.LogInformation($"DoWork2. Thread {_executionCount2}: {DateTime.Now:G}");
+          
+            File.AppendAllLines("D:\\CAAO2.txt", new List<string> { $"DoWork2.{count}: {DateTime.Now:G}" });
+
+
         }
     }
 }
