@@ -32,29 +32,29 @@ namespace CreatioManager.Services.Imp
         public async Task<List<(ContactDto, bool)>> ExistsContacts(List<ContactDto> contacts)
         {
             //Shape exists requests 
-            var batchRequest = await ShapeRequestExistsContacts(contacts);
+            //var batchRequest = await ShapeRequestExistsContacts(contacts);
 
-            var requestResponse = await _batchClient.RequestBatch(batchRequest);
-            var creatioContacts = new List<Contact>();
+            //var requestResponse = await _batchClient.RequestBatch(batchRequest);
+            //var creatioContacts = new List<Contact>();
 
 
-            foreach (var elem in requestResponse.Responses)
-            {
-                var resultResponse = JsonConvert.DeserializeObject<ResultListEntity<Contact>>(elem.Body.ToString());
-                creatioContacts.AddRange(resultResponse.Value);
-            }
+            //foreach (var elem in requestResponse.Responses)
+            //{
+            //    var resultResponse = JsonConvert.DeserializeObject<ResultListEntity<Contact>>(elem.Body.ToString());
+            //    creatioContacts.AddRange(resultResponse.Value);
+            //}
 
 
 
             var result = contacts.Select(x =>
             {
                 var exists = false;
-                if(creatioContacts.Any(y => y.UsrIDContacto == x.IdMupiContacto))
-                {
-                    exists = true;
-                    var creatioContact = creatioContacts.First(y => y.UsrIDContacto == x.IdMupiContacto);
-                    x.Id = creatioContact.Id;
-                }
+                //if(creatioContacts.Any(y => y.UsrIDContacto == x.IdMupiContacto))
+                //{
+                //    exists = true;
+                //    var creatioContact = creatioContacts.First(y => y.UsrIDContacto == x.IdMupiContacto);
+                //    x.Id = creatioContact.Id;
+                //}
                 return (x, exists);
 
             }).ToList();

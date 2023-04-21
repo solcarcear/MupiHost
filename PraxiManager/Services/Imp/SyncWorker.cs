@@ -30,38 +30,87 @@ namespace PraxiManager.Services.Imp
 
         }
 
-
+        private int _executionCount;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            //while (!stoppingToken.IsCancellationRequested)
+            //{
+
+            //    logger.LogInformation($"CAAO {DateTime.UtcNow:g}");
+
+            //    if (EntitiesSync.Any(x => x.Entity == "Contactos"))
+            //    {
+            //        var contactsConf = EntitiesSync.First(x => x.Entity == "Contactos");
+            //        using (var scope = _serviceProvider.CreateScope())
+            //        {
+            //            var scopeService = scope.ServiceProvider.GetRequiredService<IContactSyncService>();
+
+            //           // await scopeService.SyncContactsFromMupi(contactsConf.Frequency, contactsConf.From, stoppingToken);
+            //            logger.LogInformation($"CAAO {DateTime.UtcNow:g}");
+
+            //            await Task.Yield();
+            //            await Task.Run(async () => {
+
+
+            //                logger.LogInformation("CAAO 10");
+            //                await Task.Delay(10 * 1000, stoppingToken);
+            //            });
+            //        }
+            //    }
+
+            //    //await Task.Delay(5*1000, stoppingToken);
+            //}
+
+
+            logger.LogInformation("Timed Hosted Service running.");
+
+            // When the timer should have no due-time, then do the work once now.
+            await DoWork(stoppingToken);
+
+            using PeriodicTimer timer = new(TimeSpan.FromSeconds(5));
+            using PeriodicTimer timer2 = new(TimeSpan.FromSeconds(10));
+
+            try
             {
-
-                logger.LogInformation($"prueba de worker Azure a horas {DateTime.UtcNow:d}");
-
-                if (EntitiesSync.Any(x => x.Entity == "Contactos"))
+                while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
-                    var contactsConf = EntitiesSync.First(x => x.Entity == "Contactos");
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var scopeService = scope.ServiceProvider.GetRequiredService<IContactSyncService>();
 
-                        await scopeService.SyncContactsFromMupi(contactsConf.Frequency, contactsConf.From, stoppingToken);
-                    }
+                    await Task.WhenAny(
+                        DoWork(stoppingToken),
+                        DoWork2()                        
+                        );
+                    logger.LogInformation("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+
                 }
-
-                //await Task.Delay(5*1000, stoppingToken);
             }
+            catch (OperationCanceledException)
+            {
+                logger.LogInformation("Timed Hosted Service is stopping.");
+            }
+
+
+
+
+        }
+        private async Task DoWork(CancellationToken stoppingToken)
+        {
+            int count = Interlocked.Increment(ref _executionCount);
+
+
+            await Task.Delay(6 * 1000, stoppingToken);
+
+
+            logger.LogInformation($"Task 1. Count {count}: {DateTime.Now:G}");
+
+        }
+        private async Task DoWork2()
+        {
+
+            //int count = Interlocked.Increment(ref _executionCount);
+
+            logger.LogInformation($"Task 2. Count {_executionCount}: {DateTime.Now:G}");
         }
     }
 }
 
-
-//KIND TO USE SCOPE
-//using (var scope = _serviceProvider.CreateScope())
-//{
-//    var scopeService = scope.ServiceProvider.GetRequiredService<ICaaoScopeService>();
-
-//    scopeService.TestScopeService();
-//    scopeService.TestScopeService();
-//}

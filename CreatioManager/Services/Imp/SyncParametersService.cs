@@ -32,7 +32,10 @@ namespace CreatioManager.Services.Imp
             {
                 Entity=x.Name,
                 Frequency=x.UsrFrecuencia,
-                From=x.UsrFechaModificacionMUPI,
+                From=x.UsrDateFrom,
+                To=x.UsrDateTo,
+                Active=x.UsrActivo,
+                IsFirstLoad=x.UsrIsFirstLoad
             }).ToList();
         }
 

@@ -1,4 +1,5 @@
-﻿using MupiModel.Dtos.AppSettings;
+﻿using Azure.Core;
+using MupiModel.Dtos.AppSettings;
 using ICreatioContactService = CreatioManager.Services.IContactService;
 using IMupiContactService = MupiBussines.Services.IContactService;
 
@@ -25,16 +26,23 @@ namespace PraxiManager.Services.Imp
             //Get contacts from mupi
             var contactsToSync =await _mupiCcontactService.GetContactsToSync(from);
 
-            //Verify exists contact
 
-            var contactsVerified = await _creatioContactService.ExistsContacts(contactsToSync);
+            for (int i = 0; i < contactsToSync.Count(); i = i + 10) {
 
-            //sent contacts to creatio
+                var contactsVerified = await _creatioContactService.ExistsContacts(contactsToSync.Skip(i).Take(10).ToList());
 
-            var resultAdd = _creatioContactService.AddUpdateContacts(contactsVerified);
+                //sent contacts to creatio
+
+                var resultAdd = await _creatioContactService.AddUpdateContacts(contactsVerified);
+
+            }
+
+                //Verify exists contact
+
+       
 
 
-            await Task.Delay(frequency*60*1000,stoppingToken);
+           // await Task.Delay(frequency*60*1000,stoppingToken);
         }
     }
 }

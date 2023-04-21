@@ -18,12 +18,12 @@ namespace CreatioManager.HttpClients
         }
 
 
-        public async Task<BatchResult> RequestBatch(IEnumerable<BatchRequest> requests)
+        public async Task<BatchResult> RequestBatch(IEnumerable<BatchRequest> requests, int rpb=100)
         {
             var result = new BatchResult();
-            for (int i = 0; i < requests.Count(); i = i + 50)
+            for (int i = 0; i < requests.Count(); i = i + rpb)
             {
-                var batchRequest = requests.Skip(i).Take(50);
+                var batchRequest = requests.Skip(i).Take(rpb);
 
                 var batchResults = await ExecuteBatch(batchRequest);
 
